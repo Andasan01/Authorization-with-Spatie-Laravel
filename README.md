@@ -79,6 +79,8 @@ A fully functional Authentication API built with Laravel Sanctum featuring token
 ## 📝 API Endpoints
 
 ### Activity 3 - Authentication Endpoints
+
+| Method | Endpoint | Description | Auth Required |
 |--------|----------|-------------|---------------|
 | POST | `/api/register` | Register new user with validation | No |
 | POST | `/api/login` | Login & get authentication token | No |
