@@ -1,0 +1,10 @@
+HTTP/1.1 422 Unprocessable Content
+Host: localhost:8000
+Connection: close
+X-Powered-By: PHP/8.2.12
+Cache-Control: no-cache, private
+Date: Tue, 03 Mar 2026 04:11:08 GMT
+Content-Type: application/json
+Access-Control-Allow-Origin: *
+
+{"success":false,"message":"Validation errors","errors":{"email":["The email field is required."],"password":["The password field is required."]}}

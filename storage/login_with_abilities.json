@@ -1,0 +1,10 @@
+HTTP/1.1 200 OK
+Host: localhost:8000
+Connection: close
+X-Powered-By: PHP/8.2.12
+Cache-Control: no-cache, private
+Date: Tue, 03 Mar 2026 04:16:18 GMT
+Content-Type: application/json
+Access-Control-Allow-Origin: *
+
+{"success":true,"message":"Login successful","data":{"user":{"id":2,"name":"Admin User","email":"admin@example.com","email_verified_at":null,"created_at":"2026-03-03T02:56:30.000000Z","updated_at":"2026-03-03T02:56:30.000000Z"},"access_token":"3|EYKd2Cd380JloxgStk6oSJB9t7xqoZZ8ZMVHXSudc7944b30","token_type":"Bearer","expires_at":"2026-03-10T04:16:18.000000Z"}}

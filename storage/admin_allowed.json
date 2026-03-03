@@ -1,0 +1,10 @@
+HTTP/1.1 200 OK
+Host: localhost:8000
+Connection: close
+X-Powered-By: PHP/8.2.12
+Cache-Control: no-cache, private
+Date: Tue, 03 Mar 2026 04:16:33 GMT
+Content-Type: application/json
+Access-Control-Allow-Origin: *
+
+{"success":true,"message":"Admin access granted"}

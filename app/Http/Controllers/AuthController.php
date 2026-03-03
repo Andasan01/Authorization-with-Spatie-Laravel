@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 
-class AuthController extends Controller
+class AuthController extends Controller  // <-- Missing { here!
 {
     /**
      * Register a new user
@@ -36,13 +36,20 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        // Create token with 30 days expiration for registered users
-        $tokenResult = $user->createToken('auth_token');
+        // Build abilities (scopes) and create token
+        $abilities = $request->input('abilities', ['*']);
+        if (is_string($abilities)) {
+            $abilities = array_map('trim', explode(',', $abilities));
+        }
+
+        $tokenResult = $user->createToken('auth_token', $abilities ?: ['*']);
         $token = $tokenResult->plainTextToken;
-        
-        // Set custom expiration (30 days)
-        $tokenResult->accessToken->expires_at = Carbon::now()->addDays(30);
-        $tokenResult->accessToken->save();
+
+        // Set custom expiration (30 days) if accessToken model is available
+        if (isset($tokenResult->accessToken)) {
+            $tokenResult->accessToken->expires_at = Carbon::now()->addDays(30);
+            $tokenResult->accessToken->save();
+        }
 
         return response()->json([
             'success' => true,
@@ -83,13 +90,19 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->firstOrFail();
         
-        // Create token with 7 days expiration for logged in users
-        $tokenResult = $user->createToken('auth_token');
+        // Build abilities and create token with 7 days expiration for logged in users
+        $abilities = $request->input('abilities', ['*']);
+        if (is_string($abilities)) {
+            $abilities = array_map('trim', explode(',', $abilities));
+        }
+
+        $tokenResult = $user->createToken('auth_token', $abilities ?: ['*']);
         $token = $tokenResult->plainTextToken;
-        
-        // Set custom expiration (7 days)
-        $tokenResult->accessToken->expires_at = Carbon::now()->addDays(7);
-        $tokenResult->accessToken->save();
+
+        if (isset($tokenResult->accessToken)) {
+            $tokenResult->accessToken->expires_at = Carbon::now()->addDays(7);
+            $tokenResult->accessToken->save();
+        }
 
         return response()->json([
             'success' => true,
@@ -108,18 +121,53 @@ class AuthController extends Controller
      */
     public function user(Request $request)
     {
-        $user = $request->user();
-        
-        // Get current token expiration
-        $currentToken = $user->currentAccessToken();
-        
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'user' => $user,
-                'token_expires_at' => $currentToken->expires_at,
-            ]
-        ], 200);
+        try {
+            $user = $request->user();
+            
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User not found or not authenticated'
+                ], 401);
+            }
+            
+            $response = [
+                'success' => true,
+                'data' => [
+                    'user' => $user,
+                ]
+            ];
+            
+            // Safely try to get token info
+            try {
+                $currentToken = $user->currentAccessToken();
+                if ($currentToken) {
+                    // Check if expires_at exists
+                    $response['data']['token_id'] = $currentToken->id;
+                    $response['data']['token_abilities'] = $currentToken->abilities;
+                    
+                    // Safely check expires_at
+                    if (isset($currentToken->expires_at)) {
+                        $response['data']['token_expires_at'] = $currentToken->expires_at;
+                    } else {
+                        $response['data']['token_expires_at'] = 'Column exists but is null';
+                    }
+                }
+            } catch (\Exception $e) {
+                $response['data']['token_error'] = $e->getMessage();
+            }
+            
+            return response()->json($response, 200);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Server error',
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ], 500);
+        }
     }
 
     /**
@@ -130,15 +178,24 @@ class AuthController extends Controller
         $user = $request->user();
         
         // Delete current token
-        $user->currentAccessToken()->delete();
-        
-        // Create new token with fresh expiration
-        $tokenResult = $user->createToken('auth_token');
+        $current = $user->currentAccessToken();
+        if ($current) {
+            $current->delete();
+        }
+
+        // Create new token with fresh expiration (keep abilities from request if provided)
+        $abilities = $request->input('abilities', ['*']);
+        if (is_string($abilities)) {
+            $abilities = array_map('trim', explode(',', $abilities));
+        }
+
+        $tokenResult = $user->createToken('auth_token', $abilities ?: ['*']);
         $token = $tokenResult->plainTextToken;
-        
-        // Set expiration (7 days from now)
-        $tokenResult->accessToken->expires_at = Carbon::now()->addDays(7);
-        $tokenResult->accessToken->save();
+
+        if (isset($tokenResult->accessToken)) {
+            $tokenResult->accessToken->expires_at = Carbon::now()->addDays(7);
+            $tokenResult->accessToken->save();
+        }
 
         return response()->json([
             'success' => true,
