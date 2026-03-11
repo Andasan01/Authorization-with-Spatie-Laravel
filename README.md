@@ -1,5 +1,5 @@
 # 🚀 Laravel API Projects - Complete Series
-## Activities 1, 2, 3 & 4: From CRUD to Advanced Authorization
+## Activities 1, 2, 3, 4, 5, 6 & 7: From CRUD to Advanced Authorization, Notifications, Eloquent ORM & File Management
 
 <div align="center">
 
@@ -24,6 +24,9 @@ A comprehensive learning project series demonstrating progressive API developmen
   - [Activity 2: Student CRUD API (Legacy)](#-activity-2-student-crud-api-legacy)
   - [Activity 3: Laravel Sanctum Authentication API](#-activity-3-laravel-sanctum-authentication-api)
   - [Activity 4: Authorization with Spatie Permissions](#-activity-4-authorization-with-spatie-laravel-permissions)
+  - [Activity 5: Laravel Notifications System](#-activity-5-laravel-notifications-system)
+  - [Activity 6: Laravel Eloquent ORM](#-activity-6-laravel-eloquent-orm)
+  - [Activity 7: Laravel File Management](#-activity-7-laravel-file-management)
 - [Technologies Used](#-technologies-used)
 - [Installation & Setup](#-installation--setup)
 - [Running the Application](#-running-the-application)
@@ -42,6 +45,9 @@ This repository contains a comprehensive educational series of Laravel API proje
 - **Activity 2**: Basic CRUD operations with MySQL
 - **Activity 3**: Secure token-based authentication with Laravel Sanctum
 - **Activity 4**: Role-based access control with Spatie permissions
+- **Activity 5**: Database and mail notification system with real-time alerts
+- **Activity 6**: Demonstrate Laravel Eloquent ORM basics including models, migrations, blade views and simple CRUD operations
+- **Activity 7**: Add file management features (upload, list, download, delete) with database tracking
 
 ---
 
@@ -89,6 +95,35 @@ A fully functional Authentication API built with Laravel Sanctum featuring token
 | POST | `/api/logout` | Logout from current device | Yes |
 | POST | `/api/logout-all` | Logout from all devices | Yes |
 
+### Activity 5 - Notification Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| GET | `/send-notification` | Send test notification to authenticated user via mail & database | Yes |
+| GET | `/notifications` | View all notifications for authenticated user | Yes |
+| GET | `/unread-notifications` | View only unread notifications for authenticated user | Yes |
+| POST | `/notifications/read` | Mark all notifications as read for authenticated user | Yes |
+
+### Activity 6 - Eloquent Student Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| GET | `/add-student` | Insert a sample student record (web route) | No |
+| GET | `/students` | Return all student records as JSON | No |
+| GET | `/students-view` | Display all students in a Blade view | No |
+| GET | `/update-student` | Modify the course field for student ID 1 | No |
+| GET | `/delete-student` | Delete student record ID 1 | No |
+
+### Activity 7 - File Management Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| GET  | `/upload`        | Show upload form view | No |
+| POST | `/upload-file`   | Handle multiple file upload (jpg,png,pdf,docx) | No |
+| GET  | `/files`         | Display list of uploaded files | No |
+| GET  | `/download/{id}` | Download file by ID (increments count) | No |
+| GET/DELETE | `/delete/{id}`  | Remove file record and storage file | No |
+
 ---
 
 ### ✅ Activity 4: Authorization with Spatie Laravel Permissions
@@ -111,6 +146,68 @@ Advanced role-based access control (RBAC) system using Spatie Laravel Permission
 - Permission checking in controllers
 - Database-driven role and permission management
 - Support for role and permission assignment to users
+
+### ✅ Activity 5: Laravel Notifications System
+
+A comprehensive notification system using Laravel's built-in notification features with support for database and mail channels.
+
+**🎯 Functions & Description:**
+- **Send Notifications** - Send notifications to users via mail and database channels
+- **Database Storage** - Store notifications in the database for persistent access
+- **Mail Notifications** - Send email notifications to users
+- **View All Notifications** - Display all notifications for authenticated users
+- **View Unread Notifications** - Filter and display only unread notifications
+- **Mark as Read** - Mark individual or all notifications as read
+- **Notification Metadata** - Store and retrieve notification data with custom information
+- **Real-time Notification Interface** - Interactive UI for managing notifications
+- **Notification Status Tracking** - Track read/unread status with timestamps
+- **Type-based Notifications** - Support for different notification types
+
+**Key Features:**
+- Laravel notification system integration
+- Database channel for persistent notification storage
+- Mail channel for email delivery
+- UUID-based notification tracking
+- Read/unread notification filtering
+- Blade template views for notification display
+- Timestamp tracking for notification creation and reading
+- Polymorphic notification system for multiple notifiable models
+
+---
+
+### ✅ Activity 6: Laravel Eloquent ORM
+
+Introduction to the Eloquent Object-Relational Mapper. Demonstrates model definitions, migrations, simple relationships, and basic CRUD using routes and blade views.
+
+**🎯 Functions & Description:**
+- **Student Model & Migration** – Defines `Student` with fillable fields (name, email, course)
+- **Create Records** – Route `/add-student` seeds a sample student using `Student::create()`
+- **Read Records** – JSON endpoint `/students` and blade view `/students-view` show all students
+- **Update Records** – Route `/update-student` finds by ID and updates a field
+- **Delete Records** – Route `/delete-student` removes a student record
+- **Blade Rendering** – Display students in a simple `students.blade.php` view using the `$students` variable
+- **Eloquent Methods** – Usage of `all()`, `find()`, `save()`, `delete()` in closures
+
+**Key Features:**
+- Demonstrates Laravel's expressive query methods
+- Shows basic use of `fillable` and mass assignment
+- Introduces migrations for creating tables
+- Provides web-based UI and API-style access
+
+---
+
+### ✅ ACTIVITY 7: Laravel File Management
+A robust file handling system demonstrating file storage, database tracking, and dynamic UI for uploads.
+
+**🎯 Functions & Description:**
+- **Upload Multiple Files** – Users can select or drag‑and‑drop images, documents, PDFs
+- **Validation** – Restrict types and size (jpg,png,pdf,docx ≤ 2 MB each)
+- **Store in Public Disk** – Files saved under `storage/app/public/uploads`
+- **Database Records** – `FileUpload` model tracks metadata (name, path, size, mime, downloads)
+- **List Files** – `/files` blade view shows cards with previews, stats, and actions
+- **Download & Count** – `/download/{id}` serves file and increments download count
+- **Delete** – `/delete/{id}` removes both storage file and DB record
+- **Interactive UI** – Fancy drag‑drop form and responsive cards
 
 ---
 
@@ -343,18 +440,18 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 ## 💬 Support & Questions
 
 For questions or support:
-- 📧 Email: [your-email@example.com]
-- 💬 GitHub Issues: [Open an issue](https://github.com/yourusername/Authorization-Sanctum-api/issues)
-- 📝 Documentation: See sections above
+- 📧 Email: [andasan.dejhay123@gmail.com]
+- 💬 GitHub Issues: [Open an issue](https://github.com/Andasan01)
+- 📝 Documentation 1, 2, 3, 4, 5, 6 and 7 
 
 ---
 
 ## 👨‍💻 Author
 
-**Student Name**
+**Dejhay Andasan**
 - 🎓 Course: Integrative Programming and Technologies
 - 📅 Created: March 2026
-- 🏆 Activities:1, 2, 3, and 4 (Completed)
+- 🏆 Activities:1, 2, 3, 4, 5, 6 and 7 (Completed)
 
 ---
 
